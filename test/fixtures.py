@@ -9,13 +9,13 @@ from hxnfly import ppmac_util
 from .fly_mock import (MockIPython, MockPpmac, MockPositioner, MockLogbook,
                        AttrDict)
 from .sim_detector import TestDetector
-
+from bluesky.tests.conftest import RE
 
 LOG_SETUP = False
 
 
 @pytest.fixture(scope='function')
-def ipython(monkeypatch):
+def ipython(monkeypatch, RE):
     global LOG_SETUP
 
     def mock_ipython():
@@ -33,6 +33,8 @@ def ipython(monkeypatch):
         LOG_SETUP = True
 
     _ipython.user_ns['logbook'] = MockLogbook()
+    _ipython.user_ns['RE'] = RE
+    RE.md['scan_id'] = 0
     return _ipython
 
 
@@ -68,15 +70,20 @@ def set_motor_status(gpascii, axis, home_pos, act_pos, in_position,
 
 @pytest.fixture(scope='function')
 def axes(gpascii):
-    axes = dict(testx=30, testy=31, testz=32)
-    for num in axes.values():
-        set_motor_status(gpascii, num, home_pos=0.0, act_pos=1.0,
+    axes = {k: {'positioner': MockPositioner(name=k),
+                'axis_number': v}
+            for k, v in
+            dict(testx=30, testy=31, testz=32).items()}
+
+    for p_md in axes.values():
+        set_motor_status(gpascii, p_md['axis_number'], home_pos=0.0,
+                         act_pos=1.0,
                          in_position=True, closed_loop=True)
 
-    gpascii.positioners = {name: MockPositioner(name=name)
-                           for name, num in axes.items()}
-    gpascii.positioners_by_number = {num: gpascii.positioners[name]
-                                     for name, num in axes.items()}
+    gpascii.positioners = {name: p_md['positioner']
+                           for name, p_md in axes.items()}
+    gpascii.positioners_by_number = {p_md['axis_number']: p_md['positioner']
+                                     for p_md in axes.values()}
     return axes
 
 
@@ -99,9 +106,8 @@ def xspress3(ipython):
 
 @pytest.fixture(scope='function')
 def run_engine(ipython, monkeypatch):
-    from bluesky.tests.utils import setup_test_run_engine
 
-    run_engine = setup_test_run_engine()
+    run_engine = ipython.user_ns['RE']
 
     new_md = dict(run_engine.md)
     new_md.update(ipython.user_ns['gs'].RE.md)
@@ -112,14 +118,15 @@ def run_engine(ipython, monkeypatch):
 
 
 @pytest.fixture(scope='function')
-def global_state(monkeypatch, run_engine):
+def global_state(monkeypatch, ipython):
     import hxntools.scans
 
     global_state = AttrDict(RE=run_engine, detectors=[])
-    monkeypatch.setattr(hxntools.scans, 'get_gs', lambda: global_state)
+    hxntools.scansget_gs = lambda: global_state
 
     import hxntools.scans
-    hxntools.scans.setup(debug_mode=True)
+    hxntools.scans.setup(debug_mode=True,
+                         RE=ipython.user_ns['RE'])
     return global_state
 
 

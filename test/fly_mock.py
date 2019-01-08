@@ -161,6 +161,9 @@ class MockSignal:
         self._timestamp += 1
         return self._timestamp
 
+    def subscribe(self, *args, **kwargs):
+        ...
+
 
 class MockXspress3ROI:
     def __init__(self, name, value):
@@ -169,6 +172,8 @@ class MockXspress3ROI:
         self.value.put(value)
 
     channel_num = 1
+    settings = AttrDict(array_counter=MockSignal('array_counter', 3),
+                        array_data=MockSignal('array_data', [1, 2, 3]))
 
 
 class MockXspress3HDF5:
@@ -195,7 +200,9 @@ class MockXspress3(MockDetector):
                     MockXspress3ROI('Mo', [3, 2, 1]),
                     ]
     acquire = MockSignal('acquire', 0)
-    settings = AttrDict(array_counter=MockSignal('array_counter', 3))
+    settings = AttrDict(array_counter=MockSignal('array_counter', 3),
+                        array_data=MockSignal('array_data', [1, 2, 3]))
+    array_counter = MockSignal('array_counter', 3)
     external_trig = MockSignal('external_trig', True)
     hdf5 = MockXspress3HDF5()
     spectra_per_point = MockSignal('spectra_per_point', 1)

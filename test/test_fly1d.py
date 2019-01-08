@@ -53,7 +53,7 @@ def fly1d(request, monkeypatch, ppmac, axes, positioners, sim_det,
     else:
         detectors = [MockDetector('', name='det')]
 
-    scan = Fly1D(axes=axes, positioners=positioners, detectors=detectors)
+    scan = Fly1D(axes=axes, detectors=detectors)
     scan.relative = (request.param == 'relative')
 
     def FakeClass(*args, **kwargs):
@@ -98,7 +98,7 @@ def test_fly1d(fly1d, sim_det, ipython, positioners):
     for sig, value in sim_det.cam.stage_sigs.items():
         print('cam', sig.name, value)
     for sig, value in sim_det.tiff1.stage_sigs.items():
-        print('tiff1', sig.name, value)
+        print('tiff1', getattr(sig, 'name', sig), value)
 
     has_test_det = any(isinstance(det, TestDetector)
                        for det in fly1d.detectors)
@@ -116,7 +116,7 @@ def test_fly1d(fly1d, sim_det, ipython, positioners):
 def test_flyplan1d(positioners, fly1d, run_engine):
     import hxnfly.bs
     plan = hxnfly.bs.FlyPlan1D()
-    gen = plan(positioners['testx'], -1.0, 1.0, 2, 1.0, dead_time=0.001)
+    gen = plan([], positioners['testx'], -1.0, 1.0, 2, 1.0, dead_time=0.001)
     run_engine(gen)
 
 
@@ -139,7 +139,7 @@ def test_flyplan1d_with_callbacks(request, positioners, fly1d, run_engine):
                             'sig2': [data_signal2]},
                            point_signal=point_signal)
     plan.subs = [FlyDataCallbacks(), liveplot]
-    gen = plan(positioners['testx'], -1.0, 1.0, 2, 1.0, dead_time=0.001)
+    gen = plan([], positioners['testx'], -1.0, 1.0, 2, 1.0, dead_time=0.001)
     run_engine(gen)
 
     plt.savefig('liveplot-{}.png'.format(request.node.name))

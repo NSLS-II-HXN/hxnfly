@@ -79,9 +79,9 @@ def make_2d_data(startx, endx, nptsx,
                 params=['with_mock_detector', 'with_sim_detector',
                         'relative'])
 def fly2d(request, monkeypatch, ppmac, gpascii, axes, positioners,
-          sim_det, ipython, global_state):
+          sim_det, ipython, global_state, RE):
     import hxntools.scans
-    hxntools.scans.setup(debug_mode=True)
+    hxntools.scans.setup(debug_mode=True, RE=RE)
 
     def run_and_wait(*args, **kwargs):
         print('run and wait!')
@@ -102,7 +102,7 @@ def fly2d(request, monkeypatch, ppmac, gpascii, axes, positioners,
     gpascii.set_variable('gather.samples', 100)
     gpascii.set_variable('gather.maxlines', 100)
 
-    scan = Fly2D(axes=axes, positioners=positioners, detectors=detectors)
+    scan = Fly2D(axes=axes, detectors=detectors)
     startx, endx, nptsx = -1.0, 1.0, 2
     starty, endy, nptsy = -1.0, 1.0, 2
     exposure_time = 1.0
@@ -166,7 +166,8 @@ def test_failed_fly2d(fly2d, gpascii, monkeypatch):
 
 def test_flyplan2d(monkeypatch, positioners, fly2d, run_engine):
     scan_fcn = hxnfly.bs.FlyPlan2D()
-    gen = scan_fcn(positioners['testx'], -1.0, 1.0, 2,
+    gen = scan_fcn([],
+                   positioners['testx'], -1.0, 1.0, 2,
                    positioners['testy'], -1.0, 1.0, 2,
                    1.0, dead_time=0.001,
                    )
@@ -191,7 +192,8 @@ def test_flyplan2d_liveimage(request, monkeypatch, positioners, run_engine,
     liveimage = FlyLiveImage(['Fe', 'Mo'])
 
     scan_fcn.subs = [FlyDataCallbacks(), liveimage]
-    gen = scan_fcn(positioners['testx'], -1.0, 1.0, 2,
+    gen = scan_fcn([],
+                   positioners['testx'], -1.0, 1.0, 2,
                    positioners['testy'], -1.0, 1.0, 2,
                    1.0, dead_time=0.001,
                    )
@@ -225,7 +227,8 @@ def test_flyplan2d_crossection(request, monkeypatch, positioners, run_engine,
 
     crossection = FlyLiveCrossSection(['Fe'])
     scan_fcn.subs = [crossection]
-    gen = scan_fcn(positioners['testx'], -1.0, 1.0, 2,
+    gen = scan_fcn([],
+                   positioners['testx'], -1.0, 1.0, 2,
                    positioners['testy'], -1.0, 1.0, 2,
                    1.0, dead_time=0.001,
                    )
@@ -233,7 +236,7 @@ def test_flyplan2d_crossection(request, monkeypatch, positioners, run_engine,
     run_engine(gen)
 
     crossection.disable()
-    from PyQt4.QtGui import QPixmap
+    from PyQt5.QtWidgets import QPixmap
 
     live_fn = 'crossection-live-{}.png'.format(request.node.name)
     QPixmap.grabWindow(crossection.live_window.winId()).save(live_fn, 'png')
