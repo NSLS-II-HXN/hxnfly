@@ -688,21 +688,11 @@ class FlyScan(FlyBase):
 
     @property
     def table_columns(self):
-        # used for livetable
-        fs_keys = set(key
-                      for readable in self._bulk_readable
-                      for key in readable.describe().keys())
-
-        # Keys are ordered
-        desc = self.describe_collect()[self.stream_name]
-        all_keys = list(desc.keys())
-        for key in fs_keys:
-            try:
-                all_keys.remove(key)
-            except ValueError:
-                pass
-
-        return list(all_keys)
+        return [
+            key
+            for key, desc in self.describe_collect()[self.stream_name].items()
+            if (key not in self._bulk_readable and desc['dtype'] != 'array')
+        ]
 
     def _configure(self):
         for readable in self._bulk_readable:
