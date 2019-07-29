@@ -126,7 +126,7 @@ class FlyLivePlot(LivePlotBase):
             self.preview_lines = lines
             self.legend = self.ax.legend(loc=0)
             if self.legend is not None:
-                self.legend.draggable()
+                self.legend.set_draggable(True)
         else:
             for key, line in self.preview_lines.items():
                 linedata = data[key]
@@ -172,7 +172,7 @@ class FlyLivePlot(LivePlotBase):
 
         self.final_legend = ax.legend(loc=0)
         if self.final_legend is not None:
-            self.final_legend.draggable()
+            self.final_legend.set_draggable(True)
 
         ax.set_ylabel(self.ylabel or 'counts')
         ax.set_xlabel(self.fast_axis)
