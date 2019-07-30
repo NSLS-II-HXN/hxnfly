@@ -27,7 +27,7 @@ axes = OrderedDict([('x', dict(positioner=zpssx, axis_number=6)),
                     )
 # change return_speed from 25.0 to 40.0; change dead_time from 0.002 to 0.005. (H. Yan, 01/10/2017)
 configure_defaults = dict(return_speed=40.0,
-                          dead_time=0.005,
+                          dead_time=0.002,
                           fly_type='soft',
                           max_points=16384,
                           )

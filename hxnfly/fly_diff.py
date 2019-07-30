@@ -28,7 +28,7 @@ axes = OrderedDict([('x', dict(positioner=dssx, axis_number=11)),
                     )
 # change return_speed from 5.0 to 40 (H. Yan, 01/10/17)
 configure_defaults = dict(return_speed=40.0,
-                          dead_time=0.007,
+                          dead_time=0.002,
                           fly_type='soft',
                           max_points=16384
                           )
