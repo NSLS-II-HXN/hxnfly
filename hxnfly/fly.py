@@ -788,6 +788,14 @@ class FlyScan(FlyBase):
             sub_devs = [getattr(det, sub_dev) for sub_dev in det._sub_devices]
             for sub_dev in sub_devs:
                 if isinstance(sub_dev, FilePlugin):
+                    i = 0
+                    while sub_dev.capture.get() != 0:
+                        if (i % 20) == 0:
+                            logger.info('%s still acquiring: %d frames',
+                                        sub_dev.name,
+                                        sub_dev.num_captured.get())
+                        i += 1
+                        time.sleep(0.1)
                     logger.info('%s acquired %d frames', sub_dev.name,
                                 sub_dev.num_captured.get())
 
