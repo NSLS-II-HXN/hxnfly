@@ -39,6 +39,7 @@ from .log import log_time
 # sclr1 = HxnTriggeringScaler('XF:03IDC-ES{Sclr:1}', name='sclr1')
 
 logger = logging.getLogger(__name__)
+UNSTAGE_TIME_LIMIT = 300
 
 
 class FlyStatus(Status):
@@ -788,12 +789,23 @@ class FlyScan(FlyBase):
             sub_devs = [getattr(det, sub_dev) for sub_dev in det._sub_devices]
             for sub_dev in sub_devs:
                 if isinstance(sub_dev, FilePlugin):
+                    t0 = time.time()
                     i = 0
                     while sub_dev.capture.get() != 0:
-                        if (i % 20) == 0:
-                            logger.info('%s still acquiring: %d frames',
+                        elapsed = time.time() - t0
+                        if elapsed > UNSTAGE_TIME_LIMIT:
+                            logger.error('%s unstage time limit reached. '
+                                         'Stopping file plugin capture.',
+                                         sub_dev.name,
+                                         )
+                            sub_dev.capture.put(0)
+                            break
+                        elif (i % 20) == 0:
+                            logger.info('%s still acquiring: %d frames '
+                                        '(%.1f sec until considered failure)',
                                         sub_dev.name,
-                                        sub_dev.num_captured.get())
+                                        sub_dev.num_captured.get(),
+                                        UNSTAGE_TIME_LIMIT - elapsed)
                         i += 1
                         time.sleep(0.1)
                     logger.info('%s acquired %d frames', sub_dev.name,
