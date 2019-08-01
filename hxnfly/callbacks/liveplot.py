@@ -167,7 +167,8 @@ class FlyLivePlot(LivePlotBase):
         for label, y_data in data.items():
             label = 'S{} {}'.format(self.scan_id, label)
             try:
-                ax.plot(x_pos[:len(y_data)], y_data, label=label,
+                length = min((npts, len(y_data)))
+                ax.plot(x_pos[:length], y_data[:length], label=label,
                         **self.plot_kwargs)
             except TypeError:
                 continue
