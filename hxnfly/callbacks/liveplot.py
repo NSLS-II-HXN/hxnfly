@@ -33,9 +33,6 @@ class LivePlotBase(FlyDataCallbacks):
         self.fig, self.ax = None, None
 
     def _reset(self):
-        # self.final_ax = None
-        # self.final_fig = None
-
         if self.fig is None or not plt.fignum_exists(self.fig.number):
             self.fig, self.ax = plt.subplots()
         else:
@@ -185,6 +182,3 @@ class FlyLivePlot(LivePlotBase):
         ax.relim(visible_only=True)
         ax.autoscale_view(tight=True)
         fig.canvas.draw()
-
-    def new_figure(self):
-        return plt.figure()

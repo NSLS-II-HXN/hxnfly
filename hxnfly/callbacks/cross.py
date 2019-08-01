@@ -52,6 +52,3 @@ class FlyLiveCrossSection(FlyLiveImage):
 
     def draw(self, fig=None):
         pass
-
-    def new_figure(self):
-        pass
