@@ -187,6 +187,8 @@ class SignalDataHandler:
                 except TypeError:
                     value = [value]
 
+                if len(value) < npts:
+                    value = np.concatenate((value, [0] * (npts - len(value))))
                 group_data.append(value)
             else:
                 group_data.append(np.zeros(npts))
