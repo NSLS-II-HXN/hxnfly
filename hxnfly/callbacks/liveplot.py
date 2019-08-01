@@ -2,6 +2,9 @@ import asyncio
 import logging
 from collections import OrderedDict
 
+import PyQt5
+import IPython
+
 import matplotlib.pyplot as plt
 
 from .flydata import (FlyDataCallbacks, catch_exceptions, SignalDataHandler)
@@ -9,6 +12,26 @@ from .flydata import (FlyDataCallbacks, catch_exceptions, SignalDataHandler)
 
 loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
+
+
+def get_insertFig():
+    ip = IPython.get_ipython()
+    try:
+        return ip.user_ns['insertFig']
+    except KeyError:
+        def insertFig(*args, **kwargs):
+            logger.error('insertFig not found in user namespace')
+        return insertFig
+
+
+def add_toolbar_button(fig, text, *, theme_icon='go-down', slot=None):
+    toolbar = fig.canvas.manager.toolbar
+    # QtWidgets.QToolBar
+    icon = PyQt5.QtGui.QIcon.fromTheme(theme_icon)
+    action = toolbar.addAction(icon, text)
+    if slot is not None:
+        action.triggered.connect(slot)
+    return action
 
 
 class LivePlotBase(FlyDataCallbacks):
@@ -35,6 +58,8 @@ class LivePlotBase(FlyDataCallbacks):
     def _reset(self):
         if self.fig is None or not plt.fignum_exists(self.fig.number):
             self.fig, self.ax = plt.subplots()
+            add_toolbar_button(self.fig, 'Call insertFig()',
+                               slot=lambda fig: get_insertFig()(fig=self.fig))
         else:
             self.fig.clear()
             self.ax = self.fig.add_subplot(111)
@@ -75,6 +100,8 @@ class LivePlotBase(FlyDataCallbacks):
             self.final_ax = ax
             self.final_fig = fig
             self.final_legend = None
+            add_toolbar_button(self.final_fig, 'Call insertFig()',
+                               slot=lambda fig: get_insertFig()(fig=self.final_fig))
 
     def _start_updates(self):
         loop.call_soon(self._update)
