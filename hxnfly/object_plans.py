@@ -3,7 +3,6 @@
 # not be used. To build 'reusable' plans we now recommend `functools.partial`.
 
 from bluesky import utils
-import warnings
 from collections import defaultdict
 
 # The code below adds no new logic, but it wraps the generators above in
@@ -50,10 +49,6 @@ class Plan(utils.Struct):
 
         Any keyword arguments override present settings.
         """
-        warnings.warn("This plan and all object-oriented plans have been "
-                      "deprecated and will be removed in a future release "
-                      "of bluesky. Instead of Count or Scan use count or "
-                      "scan, etc.", stacklevel=2)
         subs = defaultdict(list)
         utils.update_sub_lists(subs, self.subs)
         utils.update_sub_lists(
