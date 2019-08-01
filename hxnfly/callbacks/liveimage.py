@@ -105,6 +105,8 @@ class FlyLiveImage(FlyRoiPlot):
         except ValueError:
             npts = self.num
 
+        npts = npts or 0
+
         subscan_data = self.subscan_data
         livedata = self.data.calc_data(npts)
         fly_type = self._run_header['fly_type']

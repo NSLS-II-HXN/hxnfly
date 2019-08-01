@@ -110,6 +110,8 @@ class FlyLivePlot(LivePlotBase):
         except ValueError:
             npts = self.num
 
+        npts = npts or 0
+
         with self.data._lock:
             if not self.data.updated:
                 return
