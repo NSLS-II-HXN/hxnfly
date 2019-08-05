@@ -72,7 +72,8 @@ class FlyPlan(Plan):
         if usable_detectors is None:
             ip = IPython.get_ipython()
             usable_detectors = [ip.user_ns[det_name] for det_name in
-                                ('xspress3', 'merlin1', 'zebra', 'sclr1')
+                                ('xspress3', 'merlin1', 'zebra', 'sclr1',
+                                 'dexela1')
                                 if det_name in ip.user_ns
                                 ]
 
