@@ -1,4 +1,5 @@
 from __future__ import print_function
+import versioneer
 
 try:
     from setuptools import setup, find_packages
@@ -10,9 +11,8 @@ except ImportError:
 
 
 setup(name='hxnfly',
-      version="0.0.2",
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass(),
       author='HXN',
       packages=['hxnfly', 'hxnfly.callbacks'],
-      #packages=['hxnfly', 'hxnfly.callbacks', 'hxnfly.scripts'],
-      package_data={'hxnfly': ['scripts/*.txt']},
-      )
+      package_data={'hxnfly': ['scripts/*.txt']})
