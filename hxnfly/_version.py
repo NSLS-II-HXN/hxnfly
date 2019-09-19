@@ -43,7 +43,7 @@ def get_config():
     cfg.style = "pep440-post"
     cfg.tag_prefix = "v"
     cfg.parentdir_prefix = "None"
-    cfg.versionfile_source = "{{ cookiecutter.package_dir_name }}/_version.py"
+    cfg.versionfile_source = "hxnfly/_version.py"
     cfg.verbose = False
     return cfg
 
