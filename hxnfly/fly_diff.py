@@ -22,9 +22,10 @@ except KeyError as ex:
 coord_sys = 7
 prog_num = 50
 # swap x and z axes: interchange axis_numbers of x and z (H. Yan, 01/10/17)
-axes = OrderedDict([('x', dict(positioner=dssx, axis_number=11)),
+# physically swapped cable for dssx and dssz; change the seeting to their original state (H. Yan, 08/08/2019)
+axes = OrderedDict([('x', dict(positioner=dssx, axis_number=9)),
                     ('y', dict(positioner=dssy, axis_number=10)),
-                    ('z', dict(positioner=dssz, axis_number=9))]
+                    ('z', dict(positioner=dssz, axis_number=11))]
                     )
 # change return_speed from 5.0 to 40 (H. Yan, 01/10/17)
 configure_defaults = dict(return_speed=40.0,
