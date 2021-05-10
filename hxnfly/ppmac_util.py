@@ -1,6 +1,7 @@
 from __future__ import print_function
 import logging
 
+import os
 import numpy as np
 import IPython
 from ppmac.pp_comm import PPComm
@@ -10,13 +11,20 @@ logger = logging.getLogger(__name__)
 
 
 def ppmac_connect(force=False):
-    # Store the ppmac connection in the user namespace
+    """
+    Store the ppmac connection in the user namespace.
+    Set environment variable ``PPMAC_HOST`` to valid host name or IP address.
+    """
     ip = IPython.get_ipython()
     ppmac = None
     if force or '_ppmac' not in ip.user_ns:
         logger.debug('Connecting to the Power PMAC...')
         try:
-            ppmac = ip.user_ns['_ppmac'] = PPComm(host='10.3.2.115',
+            host = os.environ.get('PPMAC_HOST', None)
+            if not host:
+                raise ValueError("Host name is not set: environment variable 'PPMAC_HOST' is not set")
+
+            ppmac = ip.user_ns['_ppmac'] = PPComm(host=host,
                                                   fast_gather=True)
         except Exception as ex:
             logger.error('Failed to connect to Power PMAC: %s', ex,
