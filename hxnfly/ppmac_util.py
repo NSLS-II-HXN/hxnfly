@@ -1,6 +1,7 @@
 from __future__ import print_function
 import logging
 
+import os
 import numpy as np
 import IPython
 from ppmac.pp_comm import PPComm
