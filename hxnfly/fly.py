@@ -19,7 +19,7 @@ from ophyd.status import Status
 from ophyd.device import Staged
 from ophyd.areadetector import FilePlugin
 
-from hxntools.detectors import Xspress3Detector
+from nslsii.detectors.xspress3 import Xspress3Detector
 from hxntools.shutter import (shutter_open, shutter_close)
 
 from . import SCRIPT_PATH
