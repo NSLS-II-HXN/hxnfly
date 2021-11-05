@@ -128,8 +128,7 @@ class FlyLiveImage(FlyRoiPlot):
                                            fly_type=fly_type)
 
         self.plot(self.fig, plot_data)
-        self.fig.canvas.set_window_title('LiveImage - scan {}'
-                                         ''.format(self.scan_id))
+        self.fig.canvas.manager.set_window_title(f"LiveImage - scan {self.scan_id}")
         self.draw()
 
     def draw(self, fig=None):
@@ -141,6 +140,14 @@ class FlyLiveImage(FlyRoiPlot):
     @catch_exceptions
     def plot(self, fig, labeled_data, *, final=False, **kwargs):
         count = len(labeled_data)
+
+        # The first frame may contain no data.
+        if not count:
+            print("Skipping the plot !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            return
+
+        print(f"Updating the plot: count={count}")
+
         if final or self._gridspec is None or count != len(self._axes):
             fig.clear()
             rows = int(np.ceil(np.sqrt(count)))
@@ -157,6 +164,7 @@ class FlyLiveImage(FlyRoiPlot):
 
         extent = kwargs.pop('extent', self.default_extents)
         for label, data in labeled_data.items():
+            print(f"data.shape = {data.shape}")
             ax = axes[label]
             ax.clear()
             ax.imshow(data, interpolation='none', extent=extent, **kwargs)
@@ -230,5 +238,5 @@ class FlyLiveImage(FlyRoiPlot):
             self.plot(fig, data, final=final, extent=extent,
                       **self.plot_kwargs)
             self.draw(fig)
-            fig.canvas.set_window_title('Final image - scan {}'
-                                        ''.format(self.scan_id))
+            fig.canvas.manager.set_window_title(f"Final image - scan {self.scan_id}")
+

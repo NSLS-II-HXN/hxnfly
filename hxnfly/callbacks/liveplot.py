@@ -9,8 +9,9 @@ import matplotlib.pyplot as plt
 
 from .flydata import (FlyDataCallbacks, catch_exceptions, SignalDataHandler)
 
+from matplotlib.backends.qt_compat import QtCore
 
-loop = asyncio.get_event_loop()
+# loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
 
 
@@ -42,6 +43,8 @@ class LivePlotBase(FlyDataCallbacks):
 
         if not signals:
             raise ValueError('Must have at least one signal to plot')
+
+        self._continue_updates = False
 
         self.signals = signals
         self.data = SignalDataHandler(signals, data_func=data_func,
@@ -87,13 +90,18 @@ class LivePlotBase(FlyDataCallbacks):
             if self._run_header is not None:
                 self._replot_preview()
         finally:
-            loop.call_later(self.rate, self._update)
+            # loop.call_later(self.rate, self._update)
+            if self._continue_updates:
+                QtCore.QTimer.singleShot(self.rate * 1000, self._update)
+
 
     def scan_started(self, doc, ndim, fast_axis=None, **scan_args):
         # if self.fast_axis != fast_axis:
         self._reset()
 
     def scan_finished(self, doc, scan_data, cancelled=False, **kwargs):
+        self._stop_updates()
+
         if (self.final_fig is None or not
                 plt.fignum_exists(self.final_fig.number)):
             fig, ax = plt.subplots()
@@ -104,7 +112,12 @@ class LivePlotBase(FlyDataCallbacks):
                                slot=lambda fig: get_insertFig()(fig=self.final_fig))
 
     def _start_updates(self):
-        loop.call_soon(self._update)
+        # loop.call_soon(self._update)
+        self._continue_updates = True
+        QtCore.QTimer.singleShot(0, self._update)  # First update after 0.1s
+
+    def _stop_updates(self):
+        self._continue_updates = False
 
 
 class FlyLivePlot(LivePlotBase):

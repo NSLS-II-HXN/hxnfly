@@ -69,7 +69,8 @@ class SubscanChecker:
 
 class FlyDataCallbacks(SubscanChecker, QtAwareCallback):
     def __init__(self, flyer=None, subscan_rate=0.5):
-        super().__init__(subscan_rate=subscan_rate)
+        SubscanChecker.__init__(self, subscan_rate=subscan_rate)
+        QtAwareCallback.__init__(self)
 
         self.flyer = flyer
         self._run_header = None
