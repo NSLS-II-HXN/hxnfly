@@ -114,7 +114,7 @@ class LivePlotBase(FlyDataCallbacks):
     def _start_updates(self):
         # loop.call_soon(self._update)
         self._continue_updates = True
-        QtCore.QTimer.singleShot(0, self._update)  # First update after 0.1s
+        QtCore.QTimer.singleShot(1000, self._update)  # First update after 1s
 
     def _stop_updates(self):
         self._continue_updates = False

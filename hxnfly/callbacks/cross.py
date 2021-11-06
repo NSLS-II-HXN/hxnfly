@@ -7,11 +7,6 @@ from .flydata import catch_exceptions
 from xray_vision.qt_widgets import CrossSectionMainWindow
 from matplotlib.backends.backend_qt5 import _create_qApp
 
-# Ensure that the kicker is running in the background, otherwise
-# QT won't respond:
-from bluesky.utils import install_qt_kicker
-install_qt_kicker()
-
 
 def _new_window(title):
     fake_data = np.zeros((5, 5))

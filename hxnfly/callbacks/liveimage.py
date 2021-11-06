@@ -135,7 +135,9 @@ class FlyLiveImage(FlyRoiPlot):
         if fig is None:
             fig = self.fig
 
+        fig.canvas.manager.show()
         fig.canvas.draw()
+        fig.canvas.flush_events()
 
     @catch_exceptions
     def plot(self, fig, labeled_data, *, final=False, **kwargs):
@@ -143,10 +145,7 @@ class FlyLiveImage(FlyRoiPlot):
 
         # The first frame may contain no data.
         if not count:
-            print("Skipping the plot !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             return
-
-        print(f"Updating the plot: count={count}")
 
         if final or self._gridspec is None or count != len(self._axes):
             fig.clear()
@@ -164,7 +163,6 @@ class FlyLiveImage(FlyRoiPlot):
 
         extent = kwargs.pop('extent', self.default_extents)
         for label, data in labeled_data.items():
-            print(f"data.shape = {data.shape}")
             ax = axes[label]
             ax.clear()
             ax.imshow(data, interpolation='none', extent=extent, **kwargs)
@@ -177,6 +175,7 @@ class FlyLiveImage(FlyRoiPlot):
         if ndim != 2:
             return
 
+        self._gridspec = None  # Clear the figure at the next update
         self.subscan_data = OrderedDict()
         self.new_subscan = False
 
