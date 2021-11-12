@@ -6,8 +6,8 @@ import threading
 from collections import OrderedDict
 
 import numpy as np
-from bluesky.callbacks import CallbackBase
-
+# from bluesky.callbacks import CallbackBase
+from bluesky.callbacks.mpl_plotting import QtAwareCallback
 
 loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
@@ -67,9 +67,10 @@ class SubscanChecker:
                                                 self.check_subscan)
 
 
-class FlyDataCallbacks(SubscanChecker, CallbackBase):
+class FlyDataCallbacks(SubscanChecker, QtAwareCallback):
     def __init__(self, flyer=None, subscan_rate=0.5):
-        super().__init__(subscan_rate=subscan_rate)
+        SubscanChecker.__init__(self, subscan_rate=subscan_rate)
+        QtAwareCallback.__init__(self)
 
         self.flyer = flyer
         self._run_header = None

@@ -128,19 +128,25 @@ class FlyLiveImage(FlyRoiPlot):
                                            fly_type=fly_type)
 
         self.plot(self.fig, plot_data)
-        self.fig.canvas.set_window_title('LiveImage - scan {}'
-                                         ''.format(self.scan_id))
+        self.fig.canvas.manager.set_window_title(f"LiveImage - scan {self.scan_id}")
         self.draw()
 
     def draw(self, fig=None):
         if fig is None:
             fig = self.fig
 
+        fig.canvas.manager.show()
         fig.canvas.draw()
+        fig.canvas.flush_events()
 
     @catch_exceptions
     def plot(self, fig, labeled_data, *, final=False, **kwargs):
         count = len(labeled_data)
+
+        # The first frame may contain no data.
+        if not count:
+            return
+
         if final or self._gridspec is None or count != len(self._axes):
             fig.clear()
             rows = int(np.ceil(np.sqrt(count)))
@@ -169,6 +175,7 @@ class FlyLiveImage(FlyRoiPlot):
         if ndim != 2:
             return
 
+        self._gridspec = None  # Clear the figure at the next update
         self.subscan_data = OrderedDict()
         self.new_subscan = False
 
@@ -230,5 +237,5 @@ class FlyLiveImage(FlyRoiPlot):
             self.plot(fig, data, final=final, extent=extent,
                       **self.plot_kwargs)
             self.draw(fig)
-            fig.canvas.set_window_title('Final image - scan {}'
-                                        ''.format(self.scan_id))
+            fig.canvas.manager.set_window_title(f"Final image - scan {self.scan_id}")
+
