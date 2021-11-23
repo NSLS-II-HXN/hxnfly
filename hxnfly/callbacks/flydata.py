@@ -6,10 +6,10 @@ import threading
 from collections import OrderedDict
 
 import numpy as np
-# from bluesky.callbacks import CallbackBase
+
+from matplotlib.backends.qt_compat import QtCore
 from bluesky.callbacks.mpl_plotting import QtAwareCallback
 
-loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
 
 
@@ -29,42 +29,42 @@ def catch_exceptions(fcn):
 class SubscanChecker:
     def __init__(self, subscan_rate):
         self._subscan_index = 0
-        self._fut_subscan = None
+        self._subscan_checker_enabled = False
         self._subscan_rate = subscan_rate
 
     def start_subscan_checker(self):
-        if self._fut_subscan is None:
-            self._fut_subscan = loop.call_soon(self.check_subscan)
+        if not self._subscan_checker_enabled:
+            logger.debug('Starting subscan checker')
+            self._subscan_checker_enabled = True
+            self._schedule_subscan_check()
 
     def stop_subscan_checker(self):
-        if self._fut_subscan is None:
-            return
+        if self._subscan_checker_enabled:
+            logger.debug('Stopping subscan checker')
+            self._subscan_checker_enabled = False
 
-        logger.debug('Cancelling subscan checker')
-        try:
-            self._fut_subscan.cancel()
-        except Exception:
-            pass
-        finally:
-            self._fut_subscan = None
+    def _schedule_subscan_check(self):
+        QtCore.QTimer.singleShot(self._subscan_rate * 1000, self.check_subscan)
 
     def check_subscan(self):
-        flyer = self.flyer
-        if flyer is not None and flyer.scan_count == 1:
-            self._fut_subscan = None
-            return
 
-        try:
-            if flyer is None or flyer.scan_count <= 1:
-                pass
-            else:
-                last_index = self._subscan_index
-                if flyer.scan_index > last_index:
-                    self._subscan_index = flyer.scan_index
-                    self.subscan_start(index=self._subscan_index)
-        finally:
-            self._fut_subscan = loop.call_later(self._subscan_rate,
-                                                self.check_subscan)
+        if self._subscan_checker_enabled:
+
+            flyer = self.flyer
+            if flyer is not None and flyer.scan_count == 1:
+                self.stop_subscan_checker()
+                return
+
+            try:
+                if flyer is None or flyer.scan_count <= 1:
+                    pass
+                else:
+                    last_index = self._subscan_index
+                    if flyer.scan_index > last_index:
+                        self._subscan_index = flyer.scan_index
+                        self.subscan_start(index=self._subscan_index)
+            finally:
+                self._schedule_subscan_check()
 
 
 class FlyDataCallbacks(SubscanChecker, QtAwareCallback):
