@@ -3,15 +3,15 @@ import logging
 from collections import OrderedDict
 
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from .flydata import (catch_exceptions, SubscanDataHandler)
 from .liveplot import LivePlotBase
 from .roiplot import FlyRoiPlot
 
-
-loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
+mpl.rcParams['figure.raise_window'] = False
 
 
 def _sum_func(*values):
@@ -238,4 +238,3 @@ class FlyLiveImage(FlyRoiPlot):
                       **self.plot_kwargs)
             self.draw(fig)
             fig.canvas.manager.set_window_title(f"Final image - scan {self.scan_id}")
-
