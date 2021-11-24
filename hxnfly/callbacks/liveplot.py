@@ -5,14 +5,15 @@ from collections import OrderedDict
 import PyQt5
 import IPython
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from .flydata import (FlyDataCallbacks, catch_exceptions, SignalDataHandler)
 
 from matplotlib.backends.qt_compat import QtCore
 
-# loop = asyncio.get_event_loop()
 logger = logging.getLogger(__name__)
+mpl.rcParams['figure.raise_window'] = False
 
 
 def get_insertFig():
