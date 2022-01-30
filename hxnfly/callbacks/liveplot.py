@@ -196,10 +196,10 @@ class FlyLivePlot(LivePlotBase):
 
         # Delete the extra lines from the plot. Leave 'self.final_plot_max_lines - 1' lines
         while True:
-            l = ax.get_lines()
-            if len(l) < self.final_plot_max_lines:
+            lns = ax.get_lines()
+            if len(lns) < self.final_plot_max_lines:
                 break
-            l[0].remove()
+            lns[0].remove()
 
         if scan_data is None:
             logger.error('No scan data for the live plot')
