@@ -129,6 +129,11 @@ class FlyLivePlot(LivePlotBase):
         self.ylabel = y
         self.enabled = True
 
+        # Limit the number of lines simultaneously shown on the final plot
+        #   (to avoid 100s of lines to be accumulated).
+        self.final_plot_max_lines = 6
+
+
     def _reset(self):
         super()._reset()
 
@@ -188,6 +193,13 @@ class FlyLivePlot(LivePlotBase):
         super().scan_finished(doc, scan_data, cancelled=cancelled, **kwargs)
 
         ax, fig = self.final_ax, self.final_fig
+
+        # Delete the extra lines from the plot. Leave 'self.final_plot_max_lines - 1' lines
+        while True:
+            lns = ax.get_lines()
+            if len(lns) < self.final_plot_max_lines:
+                break
+            lns[0].remove()
 
         if scan_data is None:
             logger.error('No scan data for the live plot')
