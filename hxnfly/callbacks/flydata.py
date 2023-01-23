@@ -44,7 +44,7 @@ class SubscanChecker:
             self._subscan_checker_enabled = False
 
     def _schedule_subscan_check(self):
-        QtCore.QTimer.singleShot(self._subscan_rate * 1000, self.check_subscan)
+        QtCore.QTimer.singleShot(int(self._subscan_rate * 1000), self.check_subscan)
 
     def check_subscan(self):
 

@@ -93,7 +93,7 @@ class LivePlotBase(FlyDataCallbacks):
         finally:
             # loop.call_later(self.rate, self._update)
             if self._continue_updates:
-                QtCore.QTimer.singleShot(self.rate * 1000, self._update)
+                QtCore.QTimer.singleShot(int(self.rate * 1000), self._update)
 
 
     def scan_started(self, doc, ndim, fast_axis=None, **scan_args):
