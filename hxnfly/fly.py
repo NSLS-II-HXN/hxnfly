@@ -745,10 +745,14 @@ class FlyScan(FlyBase):
         del self.detector_status[:]
 
         for det in self.detectors:
-            settings = det.mode_settings
-            settings.mode.put('external')
-            settings.scan_type.put('fly')
-            settings.total_points.put(self.num_points)
+            try:
+                settings = det.mode_settings
+                settings.mode.put('external')
+                settings.scan_type.put('fly')
+                settings.total_points.put(self.num_points)
+            except Exception:
+                print(f"Det {det.name} mode_settings failed to set, check the detector object.")
+                pass
 
             logger.debug('Staging %s (settings: %s)', det.name,
                          settings.get())
