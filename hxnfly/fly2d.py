@@ -171,7 +171,7 @@ def _get_scan_points(x1, x2, total_pointsx,
     #       however, need to break it up based on the travel range
     #       of the fine/coarse piezos
     if max_points is None:
-        max_points = 16384
+        max_points = 65536
 
     assert x2 > x1
     assert y2 > y1

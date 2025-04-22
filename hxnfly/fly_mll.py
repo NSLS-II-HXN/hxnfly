@@ -30,7 +30,7 @@ axes = OrderedDict([('x', dict(positioner=ssx, axis_number=3)),
 configure_defaults = dict(return_speed=40.0,
                           dead_time=0.002,
                           fly_type='soft',
-                          max_points=16384
+                          max_points=65536
                           )
 
 
