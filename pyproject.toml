@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=7"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hxnfly"
+dynamic = ["version"]
+description = "Tools for NSLS-II HXN fly scans "
+readme = "README.md"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+authors = [
+    {name = "Brookhaven National Laboratory", email = "DAMA@bnl.gov"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "bluesky",
+    "databroker",
+    "IPython",
+    "nslsii",
+    "numpy",
+    "ophyd",
+    "pandas",
+    "pyepics",
+    "scipy",
+]
+
+[project.urls]
+Homepage = "https://github.com/NSLS-II-HXN/hxnfly"
+"Bug Tracker" = "https://github.com/NSLS-II-HXN/hxnfly/issues"
+Discussions = "https://github.com/NSLS-II-HXN/hxnfly/discussions"
+Changelog = "https://github.com/NSLS-II-HXN/hxnfly/releases"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["hxnfly*"]
+
+[tool.setuptools_scm]
+write_to = "src/hxnfly/_version.py"

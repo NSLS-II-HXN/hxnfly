@@ -9,3 +9,4 @@ dist/
 .vscode
 
 __pycache__/
+src/hxnfly/_version.py
