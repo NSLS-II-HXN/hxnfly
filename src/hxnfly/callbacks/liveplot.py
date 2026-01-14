@@ -3,6 +3,7 @@ import logging
 from collections import OrderedDict
 
 import PyQt5
+from matplotlib.backends.qt_compat import QtGui
 import IPython
 
 import matplotlib as mpl
@@ -29,7 +30,7 @@ def get_insertFig():
 def add_toolbar_button(fig, text, *, theme_icon='go-down', slot=None):
     toolbar = fig.canvas.manager.toolbar
     # QtWidgets.QToolBar
-    icon = PyQt5.QtGui.QIcon.fromTheme(theme_icon)
+    icon = QtGui.QIcon.fromTheme(theme_icon)
     action = toolbar.addAction(icon, text)
     if slot is not None:
         action.triggered.connect(slot)
