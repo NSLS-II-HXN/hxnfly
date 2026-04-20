@@ -2,7 +2,6 @@ import asyncio
 import logging
 from collections import OrderedDict
 
-import PyQt5
 from matplotlib.backends.qt_compat import QtGui
 import IPython
 
