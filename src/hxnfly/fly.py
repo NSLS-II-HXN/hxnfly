@@ -956,7 +956,7 @@ class FlyScan(FlyBase):
             self._raw_gather_data = bytearray()
 
             macros = scan_info['macros']
-            num_points = np.product(macros['points'])
+            num_points = np.prod(macros['points'])
 
             # move the axes to the start, while sending the motion program in
             # parallel

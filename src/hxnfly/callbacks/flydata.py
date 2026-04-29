@@ -85,7 +85,7 @@ class FlyDataCallbacks(SubscanChecker, QtAwareCallback):
         self.fast_axis = doc['fast_axis']
         dims = doc['shape']
         ndim = len(dims)
-        self.num = np.product(dims)
+        self.num = np.prod(dims)
         self._subscan_index = 0
 
         if ndim == 1:
